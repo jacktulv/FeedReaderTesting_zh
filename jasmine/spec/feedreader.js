@@ -32,7 +32,7 @@ $(function() {
         it('has vaild URL',function(){
             allFeeds.forEach(function(element){
             expect(element.url).toBeDefined();
-            expect(element.url).not.toBe(null);
+            expect(element.url).toMatch(/^http/);
           });
         });
 
@@ -42,7 +42,7 @@ $(function() {
          it('has vaild name',function(){
              allFeeds.forEach(function(element){
              expect(element.name).toBeDefined();
-             expect(element.name).not.toBe(null);
+             expect(element.name.length).not.toBe(0);
            });
          });
     });
@@ -82,16 +82,14 @@ $(function() {
        * 和异步的 done() 函数。
 
        */
-        beforeEach(function(done) {
-              loadFeed(0,function () {
-              done();
-            })
-        });
+        beforeEach(function (done) {
+          loadFeed(0,done);
+        })
 
-        it('has entry',function(done) {
+
+        it('has entry',function() {
             expect($('.feed').children('.entry')).toBeDefined();
             expect($('.feed').children('.entry')).not.toBe(null);
-            done();
         });
     });
     /* TODO: 写一个叫做 "New Feed Selection" 的测试用例 */
@@ -104,17 +102,20 @@ $(function() {
           var after;
 
           beforeEach(function(done) {
-          
-                before=$('h2:first').html();
-                alert(before);
-                loadFeed(1,done);
-
+                loadFeed(0,function () {
+                  before=$('h2:first').html();
+                  loadFeed(1,function(){
+                      after=$('h2:first').html();
+                      done();
+                  });
+              });
           });
 
           it("changed content",function (done) {
-                after=$('h2:first').html();
-                expect(before!=after).toEqual(true);
-                done();
+
+              expect(before!=after).toEqual(true);
+              done();
+
           });
 
     });
